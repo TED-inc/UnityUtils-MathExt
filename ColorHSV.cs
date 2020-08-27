@@ -1,15 +1,51 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace TEDinc.Utils.MathExt.ColorExt
 {
+    [Serializable]
     public struct ColorHSV
     {
-        public float h, s, v;
+        public ushort h, s, v;
+        public const ushort maxH = 360;
+        public const ushort maxSV = 256;
+        public float H 
+        {
+            get => ColorHSVUtils.ConvertH(h);
+            set => h = ColorHSVUtils.ConvertH(value);
+        }
+        public float S
+        {
+            get => ColorHSVUtils.ConvertSV(s);
+            set => s = ColorHSVUtils.ConvertSV(value);
+        }
+        public float V
+        {
+            get => ColorHSVUtils.ConvertSV(v);
+            set => v = ColorHSVUtils.ConvertSV(value);
+        }
 
-        public ColorHSV(Color color) =>
+
+        public ColorHSV(Color color)
+        {
+            this.h = this.s = this.v = 0;
+            float h, s, v;
             Color.RGBToHSV(color, out h, out s, out v);
+            H = h;
+            S = s;
+            V = v;
+        }
+            
 
         public ColorHSV(float h, float s, float v)
+        {
+            this.h = this.s = this.v = 0;
+            H = h;
+            S = s;
+            V = v;
+        }
+
+        public ColorHSV(ushort h, ushort s, ushort v)
         {
             this.h = h;
             this.s = s;
@@ -18,27 +54,11 @@ namespace TEDinc.Utils.MathExt.ColorExt
 
 
         public static Vector3 operator *(ColorHSV color, float f) =>
-            new Vector3(color.h, color.s, color.v) * f;
+            new Vector3(color.H, color.S, color.V) * f;
 
-        public static ColorHSV operator -(ColorHSV a, ColorHSV b) =>
-            new ColorHSV(CirculeDiff(a.h, b.h), a.s - b.s, a.v - b.v);
+        public static Vector3Int operator -(ColorHSV a, ColorHSV b) =>
+            new Vector3Int(ColorHSVUtils.CirculeDiff(a.h, b.h, maxH), a.s - b.s, a.v - b.v);
 
-        public static implicit operator Color(ColorHSV c) => Color.HSVToRGB(c.h, c.s, c.v);
-
-        private static float CirculeDiff(float a, float b)
-        {
-            float min = Mathf.Min(a, b);
-            float max = Mathf.Max(a, b);
-
-            if (max - min > 0.5f)
-                return (1f - max + min) * Mathf.Sign(b - a);
-            else
-                return (max - min) * Mathf.Sign(a - b);
-        }
-
-        public override string ToString()
-        {
-            return $"({h}, {s}, {v})";
-        }
+        public static implicit operator Color(ColorHSV c) => Color.HSVToRGB(c.H, c.S, c.V);
     }
 }

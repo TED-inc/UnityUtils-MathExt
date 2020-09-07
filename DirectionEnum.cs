@@ -13,15 +13,18 @@ namespace TEDinc.Utils.MathExt.Enums
 
     public static class DirectionUtility
     {
-        public static Direction GetByDifference(Vector2 differene)
+        public static Direction GetByDifference(Vector2 differene) =>
+            GetByDifference(differene.x, differene.y);
+
+        public static Direction GetByDifference(float x, float y)
         {
-            if (differene.x > 0.01f)
+            if (x > 0.01f)
                 return Direction.Right;
-            else if (differene.x < -0.01f)
+            else if (x < -0.01f)
                 return Direction.Left;
-            else if (differene.y > 0.01f)
+            else if (y > 0.01f)
                 return Direction.Up;
-            else if (differene.y < -0.01f)
+            else if (y < -0.01f)
                 return Direction.Down;
             else
                 return Direction.None;

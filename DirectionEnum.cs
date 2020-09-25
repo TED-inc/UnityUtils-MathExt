@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using TEDinc.Utils.MathExt.Vectors;
 
 namespace TEDinc.Utils.MathExt.Enums
 {
@@ -29,6 +30,39 @@ namespace TEDinc.Utils.MathExt.Enums
             else
                 return Direction.None;
         }
+
+        public static Direction GetRotationTrend(Direction from, Direction to)
+        {
+            if (from == to || from == Direction.None || to == Direction.None)
+                return Direction.None;
+            else
+                return GetTrend(from, to);
+        }
+
+        public static Direction GetTrend(Direction from, Direction to)
+        {
+            Vector2Int fromV = GetByDirection(from);
+            Vector2Int toV = GetByDirection(to);
+
+            if (from == to)
+                return from;
+            if (fromV + toV == Vector2Int.zero)
+                return Direction.None;
+
+            bool isUpOrDownInFrom = fromV.y != 0;
+            Direction upOrDown = isUpOrDownInFrom ? from : to;
+            Direction leftOrRight = isUpOrDownInFrom ? to : from;
+
+            if (upOrDown == Direction.Up)
+                return isUpOrDownInFrom ? leftOrRight : Invert(leftOrRight);
+            else
+                return isUpOrDownInFrom ? Invert(leftOrRight) : leftOrRight;
+
+        }
+
+        public static Direction Invert(Direction direction) =>
+            GetByDifference(GetByDirection(direction) * -1);
+
 
         public static Vector2Int GetByDirection(Direction direction)
         {
